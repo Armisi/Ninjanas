@@ -32,6 +32,7 @@ public class MyGame implements ApplicationListener {
 	private float Speed = 500; // main nindz45s speed
 	private float ShuSpeed = 1000;
 	private float kampas;
+	private float ShuRadius = 16;
 	@Override
 
 	public void create() {
@@ -43,7 +44,7 @@ public class MyGame implements ApplicationListener {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, ScWidth, ScHeight);
 
-		Ninja = new Ninja(NinjaImage, ShurikenImage, 64, 64, 64);
+		Ninja = new Ninja(NinjaImage, 64, 64, 64);
 
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
@@ -57,6 +58,7 @@ public class MyGame implements ApplicationListener {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		batch.draw(BackgroundImage, 0, 0);
+		
 		for (int i = 0; i < Ninja.getShurikens().size(); i++) {
 			batch.draw(ShurikenImage, Ninja.getShurikens().get(i).getX() - Ninja.getShurikens().get(i).radius,
 					Ninja.getShurikens().get(i).getY() - Ninja.getShurikens().get(i).radius);
@@ -115,7 +117,7 @@ public class MyGame implements ApplicationListener {
 			if (TimeUtils.nanoTime()/2- shuCool > 500000000) {
 				kampas = (float) Math.atan2(ScHeight - Gdx.input.getY() * ScHeight / h - Ninja.y,
 						Gdx.input.getX() * ScWidth / w - Ninja.x);
-				Ninja.addShuriken(ShurikenImage, Ninja.x - Ninja.radius/2, Ninja.y - Ninja.radius/2, Ninja.radius/2, kampas);
+				Ninja.addShuriken(ShurikenImage, Ninja.x - ShuRadius, Ninja.y - ShuRadius, ShuRadius, kampas);
 				shuCool = TimeUtils.nanoTime()/2;
 			}		
 		}

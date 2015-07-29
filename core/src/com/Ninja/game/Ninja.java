@@ -11,7 +11,7 @@ public class Ninja extends Circle{
 	private Texture NinjaImage; // nindzes paveiksliukas
 	private List<Shuriken> shuList;
 	
-	public Ninja(Texture NinjaT, Texture ShuT, float x, float y, float radius){
+	public Ninja(Texture NinjaT, float x, float y, float radius){
 		this.x = x + radius;
 		this.y = y + radius;
 		this.NinjaImage = NinjaT;
