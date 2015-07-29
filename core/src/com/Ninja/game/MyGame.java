@@ -115,7 +115,7 @@ public class MyGame implements ApplicationListener {
 			if (TimeUtils.nanoTime()/2- shuCool > 500000000) {
 				kampas = (float) Math.atan2(ScHeight - Gdx.input.getY() * ScHeight / h - Ninja.y,
 						Gdx.input.getX() * ScWidth / w - Ninja.x);
-				Ninja.addShuriken(ShurikenImage, Ninja.x, Ninja.y, Ninja.radius/2, kampas);
+				Ninja.addShuriken(ShurikenImage, Ninja.x - Ninja.radius/2, Ninja.y - Ninja.radius/2, Ninja.radius/2, kampas);
 				shuCool = TimeUtils.nanoTime()/2;
 			}		
 		}
