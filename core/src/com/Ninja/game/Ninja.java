@@ -27,8 +27,8 @@ public class Ninja extends Circle{
 		return NinjaImage;
 	}
 	
-	public void addShuriken(Texture Txt, float x, float y, float radius){
-		Shuriken shi =  new Shuriken(Txt, x, y, radius/2);
+	public void addShuriken(Texture Txt, float x, float y, float radius, float kampas){
+		Shuriken shi =  new Shuriken(Txt, x, y, radius/2, kampas);
 		//shuList.clear();
 		shuList.add(shi);
 	}

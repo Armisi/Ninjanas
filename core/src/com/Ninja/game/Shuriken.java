@@ -7,14 +7,16 @@ public class Shuriken extends Circle{
 	
 	public float x;
 	public float y;
+	public float kampas;
 	
 	private Texture shuTxt;
 	
-	public Shuriken(Texture shuTxt, float x, float y, float radius){
+	public Shuriken(Texture shuTxt, float x, float y, float radius, float kampas){
 		this.x = x + radius;
 		this.y = y + radius;
 		this.shuTxt = shuTxt;
 		this.radius = radius;
+		this.kampas = kampas;
 	}
 	
 	public Texture getTexture(){

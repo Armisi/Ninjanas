@@ -22,19 +22,18 @@ public class MyGame implements ApplicationListener {
 	private BitmapFont font;
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
-	
-	
+
 	float w;
 	float h;
 	float shuCool = 0;
 	private Ninja Ninja;
 	private float ScWidth = 1920;
 	private float ScHeight = 1080;
-	private float Speed = 500; //main nindz45s speed
-	private float ShuSpeed = 500;
-
+	private float Speed = 500; // main nindz45s speed
+	private float ShuSpeed = 1000;
+	private float kampas;
 	@Override
-	
+
 	public void create() {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
@@ -43,89 +42,85 @@ public class MyGame implements ApplicationListener {
 		ShurikenImage = new Texture(Gdx.files.internal("shi.png"));
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, ScWidth, ScHeight);
-		
+
 		Ninja = new Ninja(NinjaImage, ShurikenImage, 64, 64, 64);
-		
+
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
 	}
 
-
-	public void draw(){
+	public void draw() {
 		float MouseX = Gdx.input.getX() * ScWidth / w;
-		float MouseY = ScHeight - Gdx.input.getY() * ScHeight / h; 
+		float MouseY = ScHeight - Gdx.input.getY() * ScHeight / h;
 		Gdx.gl.glClearColor(100, 0, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		batch.draw(BackgroundImage, 0, 0);
-		for(int i = 0; i < Ninja.getShurikens().size();i++){
-			batch.draw(ShurikenImage, Ninja.getShurikens().get(i).getX(), Ninja.getShurikens().get(i).getY());
-			float sin = (float) ((MouseY - Ninja.y)/(Math.sqrt((MouseX - Ninja.x)*(MouseX - Ninja.x) + (MouseY - Ninja.y)*(MouseY -Ninja.y))));
-			float cos = (float) ((MouseX - Ninja.x)/(Math.sqrt((MouseX - Ninja.x)*(MouseX - Ninja.x) + (MouseY - Ninja.y)*(MouseY -Ninja.y))));
-			Ninja.getShurikens().get(i).x += sin * Gdx.graphics.getDeltaTime() * ShuSpeed;
-			Ninja.getShurikens().get(i).y += cos * Gdx.graphics.getDeltaTime() * ShuSpeed;
+		for (int i = 0; i < Ninja.getShurikens().size(); i++) {
+			batch.draw(ShurikenImage, Ninja.getShurikens().get(i).getX() - Ninja.getShurikens().get(i).radius,
+					Ninja.getShurikens().get(i).getY() - Ninja.getShurikens().get(i).radius);
+			Ninja.getShurikens().get(i).x += Math.cos(Ninja.getShurikens().get(i).kampas) 
+					* Gdx.graphics.getDeltaTime() * ShuSpeed;
+			Ninja.getShurikens().get(i).y += Math.sin(Ninja.getShurikens().get(i).kampas) 
+					* Gdx.graphics.getDeltaTime() * ShuSpeed;
 		}
 		batch.draw(NinjaImage, Ninja.x - Ninja.getRadius(), Ninja.y - Ninja.getRadius());
-		
+
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
-		
-		
-		
 
-		
-		String Mou = "Mouse Koord in window: " + MouseX + "   " + MouseY; 
+		font.draw(batch, "Kampas: " + Math.toDegrees(kampas), 0, 700);
+
+		String Mou = "Mouse Koord in window: " + MouseX + "   " + MouseY;
 		font.draw(batch, Mou, 0, 600);
-		
+
 		String tekstas = "Ninjas koord: " + Ninja.x + ";  " + Ninja.y;
 		font.draw(batch, tekstas, 0, 100);
-		font.draw(batch, ""+Ninja.getShurikens().size(), 0, 200);
+		font.draw(batch, "" + Ninja.getShurikens().size(), 0, 200);
 		String rad = "Ninja Radius: " + Ninja.getRadius();
 		font.draw(batch, rad, 0, 300);
 		batch.end();
 	}
-	
+
 	@Override
 	public void render() {
 
 		draw();
 		
-		if(Gdx.input.isKeyPressed(Keys.LEFT) && Gdx.input.isKeyPressed(Keys.DOWN)){
+		if(Gdx.input.isKeyPressed(Keys.A) && Gdx.input.isKeyPressed(Keys.S)){
 			Ninja.x -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
 			Ninja.y -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
-		}else if(Gdx.input.isKeyPressed(Keys.LEFT) && Gdx.input.isKeyPressed(Keys.UP)){
+		}else if(Gdx.input.isKeyPressed(Keys.A) && Gdx.input.isKeyPressed(Keys.W)){
 			Ninja.x -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
 			Ninja.y += Speed * 0.707 * Gdx.graphics.getDeltaTime();
-		}else if(Gdx.input.isKeyPressed(Keys.RIGHT) && Gdx.input.isKeyPressed(Keys.DOWN)){
+		}else if(Gdx.input.isKeyPressed(Keys.D) && Gdx.input.isKeyPressed(Keys.S)){
 			Ninja.x += Speed * 0.707 * Gdx.graphics.getDeltaTime();
 			Ninja.y -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
-		}else if(Gdx.input.isKeyPressed(Keys.RIGHT) && Gdx.input.isKeyPressed(Keys.UP)){
+		}else if(Gdx.input.isKeyPressed(Keys.D) && Gdx.input.isKeyPressed(Keys.W)){
 			Ninja.x += Speed * 0.707 * Gdx.graphics.getDeltaTime();
 			Ninja.y += Speed * 0.707 * Gdx.graphics.getDeltaTime();
 		}
-		else if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+		else if (Gdx.input.isKeyPressed(Keys.A)) {
 			Ninja.x -= Speed * Gdx.graphics.getDeltaTime();
-		} else if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+		} else if (Gdx.input.isKeyPressed(Keys.D)) {
 			Ninja.x += Speed * Gdx.graphics.getDeltaTime();
-		} else if (Gdx.input.isKeyPressed(Keys.UP)) {
+		} else if (Gdx.input.isKeyPressed(Keys.W)) {
 			Ninja.y += Speed * Gdx.graphics.getDeltaTime();
-		} else if (Gdx.input.isKeyPressed(Keys.DOWN)){
+		} else if (Gdx.input.isKeyPressed(Keys.S)){
 			Ninja.y -= Speed * Gdx.graphics.getDeltaTime();
 		}
 
-		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-			
-			//if (TimeUtils.nanoTime()/10- shuCool > 500000000) {
-				Ninja.addShuriken(ShurikenImage, Gdx.input.getX() * ScWidth / w,
-						ScHeight - Gdx.input.getY() * ScHeight / h, 32);
-				//shuCool = TimeUtils.nanoTime()/10;
-			//}
-
-			
-				
+		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {	
+			if (TimeUtils.nanoTime()/2- shuCool > 500000000) {
+				kampas = (float) Math.atan2(ScHeight - Gdx.input.getY() * ScHeight / h - Ninja.y,
+						Gdx.input.getX() * ScWidth / w - Ninja.x);
+				Ninja.addShuriken(ShurikenImage, Ninja.x, Ninja.y, Ninja.radius/2, kampas);
+				shuCool = TimeUtils.nanoTime()/2;
+			}		
 		}
 		
+		// borders
 		if(Ninja.x - Ninja.getRadius() < 0){
 			Ninja.x = Ninja.getRadius();
 		}
@@ -141,12 +136,15 @@ public class MyGame implements ApplicationListener {
 		
 	}
 
+	public void ShootShu(double kampas, int i) {
+	
+	}
+
 	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
 
 	@Override
 	public void pause() {
