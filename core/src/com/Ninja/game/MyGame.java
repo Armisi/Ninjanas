@@ -33,6 +33,7 @@ public class MyGame implements ApplicationListener {
 	private float ShuSpeed = 1000;
 	private float kampas;
 	private float ShuRadius = 16;
+	private float NinjaRadius = 64;
 	@Override
 
 	public void create() {
@@ -44,7 +45,7 @@ public class MyGame implements ApplicationListener {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, ScWidth, ScHeight);
 
-		Ninja = new Ninja(NinjaImage, 64, 64, 64);
+		Ninja = new Ninja(NinjaImage, 64, 64, NinjaRadius);
 
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
@@ -113,6 +114,8 @@ public class MyGame implements ApplicationListener {
 			Ninja.y -= Speed * Gdx.graphics.getDeltaTime();
 		}
 
+		
+		
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {	
 			if (TimeUtils.nanoTime()/2- shuCool > 500000000) {
 				kampas = (float) Math.atan2(ScHeight - Gdx.input.getY() * ScHeight / h - Ninja.y,
@@ -121,6 +124,7 @@ public class MyGame implements ApplicationListener {
 				shuCool = TimeUtils.nanoTime()/2;
 			}		
 		}
+		
 		
 		// borders
 		if(Ninja.x - Ninja.getRadius() < 0){
