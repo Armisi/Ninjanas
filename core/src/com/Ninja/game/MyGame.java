@@ -13,6 +13,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.math.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.Ninja.game.*;
 
 public class MyGame implements ApplicationListener {
@@ -34,9 +38,14 @@ public class MyGame implements ApplicationListener {
 	private float kampas;
 	private float ShuRadius = 16;
 	private float NinjaRadius = 64;
+	private int NinjaCount = 3;
+	
+	private List<Ninja> NinjaList;
 	@Override
 
 	public void create() {
+
+		// pirma paveiksliukas Arnai
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		NinjaImage = new Texture(Gdx.files.internal("ninja.png"));
@@ -44,6 +53,13 @@ public class MyGame implements ApplicationListener {
 		ShurikenImage = new Texture(Gdx.files.internal("shi.png"));
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, ScWidth, ScHeight);
+		
+		
+		NinjaList = new ArrayList<Ninja>();
+		
+		for(int i = 0; i < NinjaCount; i++){
+			NinjaList.add(new Ninja(NinjaImage, (float) Math.random()*ScWidth, (float) Math.random()*ScHeight, NinjaRadius));
+		}
 
 		Ninja = new Ninja(NinjaImage, 64, 64, NinjaRadius);
 
@@ -60,6 +76,10 @@ public class MyGame implements ApplicationListener {
 		batch.begin();
 		batch.draw(BackgroundImage, 0, 0);
 		
+		for(int i = 0; i < NinjaList.size(); i++){
+			batch.draw(NinjaImage, NinjaList.get(i).x - NinjaList.get(i).getRadius(), NinjaList.get(i).y - NinjaList.get(i).getRadius());
+		}
+		
 		for (int i = 0; i < Ninja.getShurikens().size(); i++) {
 			batch.draw(ShurikenImage, Ninja.getShurikens().get(i).getX() - Ninja.getShurikens().get(i).radius,
 					Ninja.getShurikens().get(i).getY() - Ninja.getShurikens().get(i).radius);
@@ -67,9 +87,17 @@ public class MyGame implements ApplicationListener {
 					* Gdx.graphics.getDeltaTime() * ShuSpeed;
 			Ninja.getShurikens().get(i).y += Math.sin(Ninja.getShurikens().get(i).kampas) 
 					* Gdx.graphics.getDeltaTime() * ShuSpeed;
+			for (int j = 0; j < NinjaList.size(); j++) {
+				if (atstumas(NinjaList.get(j).x, Ninja.getShurikens().get(i).x, NinjaList.get(j).y,
+						Ninja.getShurikens().get(i).y) < NinjaRadius + ShuRadius - 5) {
+					NinjaList.get(j).x = (float) Math.random() * ScWidth;
+					NinjaList.get(j).y = (float) Math.random() * ScHeight;
+				}
+			}
 		}
+		
 		batch.draw(NinjaImage, Ninja.x - Ninja.getRadius(), Ninja.y - Ninja.getRadius());
-
+		
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
 
@@ -114,7 +142,15 @@ public class MyGame implements ApplicationListener {
 			Ninja.y -= Speed * Gdx.graphics.getDeltaTime();
 		}
 
-		
+		for (int i = 0; i < NinjaList.size(); i++) {
+			if (atstumas(Ninja.x, NinjaList.get(i).x, Ninja.y, NinjaList.get(i).y) < NinjaRadius * 2 - 5) {
+				double CollisionKampas = Math.atan2(Ninja.y - NinjaList.get(i).y, Ninja.x - NinjaList.get(i).x);
+				Ninja.x += Math.cos(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed;
+				Ninja.y += Math.sin(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed;
+				NinjaList.get(i).x -= Math.cos(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed;
+				NinjaList.get(i).y -= Math.sin(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed;
+			}
+		}
 		
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {	
 			if (TimeUtils.nanoTime()/2- shuCool > 500000000) {
@@ -125,6 +161,20 @@ public class MyGame implements ApplicationListener {
 			}		
 		}
 		
+		for(int i = 0;i < NinjaList.size(); i++){	
+			if(NinjaList.get(i).x - NinjaList.get(i).getRadius() < 0){
+				NinjaList.get(i).x = NinjaList.get(i).getRadius();
+			}
+			if(NinjaList.get(i).y - NinjaList.get(i).getRadius() < 0){
+				NinjaList.get(i).y = NinjaList.get(i).getRadius();
+			}
+			if(NinjaList.get(i).x + NinjaList.get(i).getRadius() > ScWidth){
+				NinjaList.get(i).x = ScWidth - NinjaList.get(i).getRadius();
+			}
+			if(NinjaList.get(i).y + NinjaList.get(i).getRadius() > ScHeight){
+				NinjaList.get(i).y = ScHeight - NinjaList.get(i).getRadius();
+			}
+		}
 		
 		// borders
 		if(Ninja.x - Ninja.getRadius() < 0){
@@ -142,10 +192,11 @@ public class MyGame implements ApplicationListener {
 		
 	}
 
-	public void ShootShu(double kampas, int i) {
-	
+	public float atstumas(float x, float x2, float y, float y2) {
+		return (float) Math.sqrt((x - x2) * (x - x2) + (y - y2) * (y - y2));
 	}
-
+	
+	
 	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
