@@ -145,10 +145,16 @@ public class MyGame implements ApplicationListener {
 		for (int i = 0; i < NinjaList.size(); i++) {
 			if (atstumas(Ninja.x, NinjaList.get(i).x, Ninja.y, NinjaList.get(i).y) < NinjaRadius * 2 - 5) {
 				double CollisionKampas = Math.atan2(Ninja.y - NinjaList.get(i).y, Ninja.x - NinjaList.get(i).x);
-				Ninja.x += Math.cos(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed;
-				Ninja.y += Math.sin(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed;
-				NinjaList.get(i).x -= Math.cos(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed;
-				NinjaList.get(i).y -= Math.sin(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed;
+				Ninja.x += Math.cos(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
+				Ninja.y += Math.sin(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
+				NinjaList.get(i).x -= Math.cos(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
+				NinjaList.get(i).y -= Math.sin(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
+				if (atstumas(Ninja.x, NinjaList.get(i).x, Ninja.y, NinjaList.get(i).y) < NinjaRadius * 2 - 2) {
+					Ninja.x += Math.cos(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
+					Ninja.y += Math.sin(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
+					NinjaList.get(i).x -= Math.cos(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
+					NinjaList.get(i).y -= Math.sin(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
+				}
 			}
 		}
 		
