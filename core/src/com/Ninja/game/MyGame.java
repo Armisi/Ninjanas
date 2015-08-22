@@ -144,7 +144,7 @@ public class MyGame implements ApplicationListener {
 		
 		for (int j = 0; j < NinjaList.size(); j++){
 			for (int i = j + 1; i < NinjaList.size(); i++) {
-				if (atstumas(NinjaList.get(j).x, NinjaList.get(i).x, NinjaList.get(j).y, NinjaList.get(i).y) < NinjaRadius * 2 - 5) {
+				if (atstumas(NinjaList.get(j).x, NinjaList.get(i).x, NinjaList.get(j).y, NinjaList.get(i).y) < NinjaRadius * 2 - 3) {
 					double CollisionKampas = Math.atan2(NinjaList.get(j).y - NinjaList.get(i).y, NinjaList.get(j).x - NinjaList.get(i).x);
 					NinjaList.get(j).x += Math.cos(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
 					NinjaList.get(j).y += Math.sin(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
