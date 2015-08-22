@@ -30,7 +30,6 @@ public class MyGame implements ApplicationListener {
 	float w;
 	float h;
 	float shuCool = 0;
-	private Ninja Ninja;
 	private float ScWidth = 1920;
 	private float ScHeight = 1080;
 	private float Speed = 500; // main nindz45s speed
@@ -39,6 +38,7 @@ public class MyGame implements ApplicationListener {
 	private float ShuRadius = 16;
 	private float NinjaRadius = 64;
 	private int NinjaCount = 4;
+	private int main = 0;
 	
 	private List<Ninja> NinjaList;
 	@Override
@@ -106,10 +106,10 @@ public class MyGame implements ApplicationListener {
 		String Mou = "Mouse Koord in window: " + MouseX + "   " + MouseY;
 		font.draw(batch, Mou, 0, 600);
 
-		String tekstas = "Ninjas koord: " + NinjaList.get(0).x + ";  " + NinjaList.get(0).y;
+		String tekstas = "Ninjas koord: " + NinjaList.get(main).x + ";  " + NinjaList.get(main).y;
 		font.draw(batch, tekstas, 0, 100);
-		font.draw(batch, "" + NinjaList.get(0).getShurikens().size(), 0, 200);
-		String rad = "Ninja Radius: " + NinjaList.get(0).getRadius();
+		font.draw(batch, "" + NinjaList.get(main).getShurikens().size(), 0, 200);
+		String rad = "Ninja Radius: " + NinjaList.get(main).getRadius();
 		font.draw(batch, rad, 0, 300);
 		batch.end();
 	}
@@ -120,26 +120,26 @@ public class MyGame implements ApplicationListener {
 		draw();
 		
 		if(Gdx.input.isKeyPressed(Keys.A) && Gdx.input.isKeyPressed(Keys.S)){
-			NinjaList.get(0).x -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
-			NinjaList.get(0).y -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
+			NinjaList.get(main).x -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
+			NinjaList.get(main).y -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
 		}else if(Gdx.input.isKeyPressed(Keys.A) && Gdx.input.isKeyPressed(Keys.W)){
-			NinjaList.get(0).x -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
-			NinjaList.get(0).y += Speed * 0.707 * Gdx.graphics.getDeltaTime();
+			NinjaList.get(main).x -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
+			NinjaList.get(main).y += Speed * 0.707 * Gdx.graphics.getDeltaTime();
 		}else if(Gdx.input.isKeyPressed(Keys.D) && Gdx.input.isKeyPressed(Keys.S)){
-			NinjaList.get(0).x += Speed * 0.707 * Gdx.graphics.getDeltaTime();
-			NinjaList.get(0).y -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
+			NinjaList.get(main).x += Speed * 0.707 * Gdx.graphics.getDeltaTime();
+			NinjaList.get(main).y -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
 		}else if(Gdx.input.isKeyPressed(Keys.D) && Gdx.input.isKeyPressed(Keys.W)){
-			NinjaList.get(0).x += Speed * 0.707 * Gdx.graphics.getDeltaTime();
-			NinjaList.get(0).y += Speed * 0.707 * Gdx.graphics.getDeltaTime();
+			NinjaList.get(main).x += Speed * 0.707 * Gdx.graphics.getDeltaTime();
+			NinjaList.get(main).y += Speed * 0.707 * Gdx.graphics.getDeltaTime();
 		}
 		else if (Gdx.input.isKeyPressed(Keys.A)) {
-			NinjaList.get(0).x -= Speed * Gdx.graphics.getDeltaTime();
+			NinjaList.get(main).x -= Speed * Gdx.graphics.getDeltaTime();
 		} else if (Gdx.input.isKeyPressed(Keys.D)) {
-			NinjaList.get(0).x += Speed * Gdx.graphics.getDeltaTime();
+			NinjaList.get(main).x += Speed * Gdx.graphics.getDeltaTime();
 		} else if (Gdx.input.isKeyPressed(Keys.W)) {
-			NinjaList.get(0).y += Speed * Gdx.graphics.getDeltaTime();
+			NinjaList.get(main).y += Speed * Gdx.graphics.getDeltaTime();
 		} else if (Gdx.input.isKeyPressed(Keys.S)){
-			NinjaList.get(0).y -= Speed * Gdx.graphics.getDeltaTime();
+			NinjaList.get(main).y -= Speed * Gdx.graphics.getDeltaTime();
 		}
 		
 		for (int j = 0; j < NinjaList.size(); j++){
@@ -162,9 +162,9 @@ public class MyGame implements ApplicationListener {
 		
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {	
 			if (TimeUtils.nanoTime()/2- shuCool > 500000000) {
-				kampas = (float) Math.atan2(ScHeight - Gdx.input.getY() * ScHeight / h - NinjaList.get(0).y,
-						Gdx.input.getX() * ScWidth / w - NinjaList.get(0).x);
-				NinjaList.get(0).addShuriken(ShurikenImage, NinjaList.get(0).x - ShuRadius, NinjaList.get(0).y - ShuRadius, ShuRadius, kampas);
+				kampas = (float) Math.atan2(ScHeight - Gdx.input.getY() * ScHeight / h - NinjaList.get(main).y,
+						Gdx.input.getX() * ScWidth / w - NinjaList.get(main).x);
+				NinjaList.get(main).addShuriken(ShurikenImage, NinjaList.get(main).x - ShuRadius, NinjaList.get(main).y - ShuRadius, ShuRadius, kampas);
 				shuCool = TimeUtils.nanoTime()/2;
 			}		
 		}
