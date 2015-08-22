@@ -3,7 +3,7 @@ import java.net.*;
 import java.util.Random;
 
 class UDPClient {
-	public static void main(String args[]) throws Exception {
+	public static void main(String args[]){
 		
 		   // Now we create a thread that will listen for incoming socket connections
         new Thread (new Runnable(){
@@ -17,6 +17,8 @@ class UDPClient {
 					} catch (SocketException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						System.out.println("FROM SE");
+
 					}
             		InetAddress IPAddress = null;
 					try {
@@ -24,9 +26,11 @@ class UDPClient {
 					} catch (UnknownHostException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						System.out.println("FROM SE");
+
 					}
-            		byte[] sendData = new byte[1024];
-            		byte[] receiveData = new byte[1024];
+            		byte[] sendData = new byte[64];
+            		byte[] receiveData = new byte[64];
             		String sentence = "asdasd"; //inFromUser.readLine();
             		sendData = sentence.getBytes();
             		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
@@ -35,13 +39,17 @@ class UDPClient {
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						System.out.println("FROM SE");
+
 					}
             		clientSocket.close();
             		try {
-						Thread.sleep(2);
+						Thread.sleep(5);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						System.out.println("FROM SE");
+
 					}
             		}
            
@@ -53,16 +61,45 @@ class UDPClient {
 
 			int  n = rand.nextInt(50) + 1;
 		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-		DatagramSocket clientSocket = new DatagramSocket();
-		InetAddress IPAddress = InetAddress.getByName("192.168.1.71");
+		DatagramSocket clientSocket = null;
+		try {
+			clientSocket = new DatagramSocket(15232);
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("FROM SE");
+
+		}
+		InetAddress IPAddress = null;
+		try {
+			IPAddress = InetAddress.getByName("192.168.1.71");
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("FROM SE");
+		}
 		byte[] sendData = new byte[1024];
 		byte[] receiveData = new byte[1024];
 		String sentence = ""+n; //inFromUser.readLine();
 		sendData = sentence.getBytes();
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
-		clientSocket.send(sendPacket);
+		try {
+			clientSocket.send(sendPacket);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			System.out.println("FROM SE");
+
+		}
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-		clientSocket.receive(receivePacket);
+		try {
+			clientSocket.receive(receivePacket);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("FROM SE");
+
+		}
 		String modifiedSentence = new String(receivePacket.getData());
 		System.out.println("FROM SERVER:" + modifiedSentence);
 		clientSocket.close();
