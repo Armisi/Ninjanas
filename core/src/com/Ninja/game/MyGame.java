@@ -14,8 +14,17 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.math.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.Ninja.game.*;
 
@@ -39,8 +48,10 @@ public class MyGame implements ApplicationListener {
 	private float NinjaRadius = 64;
 	private int NinjaCount = 4;
 	private int main = 0;
-	
+	private String ip;
+
 	private List<Ninja> NinjaList;
+
 	@Override
 
 	public void create() {
@@ -53,16 +64,18 @@ public class MyGame implements ApplicationListener {
 		ShurikenImage = new Texture(Gdx.files.internal("shi.png"));
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, ScWidth, ScHeight);
-		
-		
+
 		NinjaList = new ArrayList<Ninja>();
-		
-		for(int i = 0; i < NinjaCount; i++){
-			NinjaList.add(new Ninja(NinjaImage, (float) Math.random()*ScWidth, (float) Math.random()*ScHeight, NinjaRadius));
+
+		for (int i = 0; i < NinjaCount; i++) {
+			NinjaList.add(new Ninja(NinjaImage, (float) Math.random() * ScWidth, (float) Math.random() * ScHeight,
+					NinjaRadius));
 		}
 
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
+
+		Connection();
 	}
 
 	public void draw() {
@@ -73,19 +86,18 @@ public class MyGame implements ApplicationListener {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		batch.draw(BackgroundImage, 0, 0);
+
 		
-		for(int i = 0; i < NinjaList.size(); i++){
-			batch.draw(NinjaImage, NinjaList.get(i).x - NinjaList.get(i).getRadius(), NinjaList.get(i).y - NinjaList.get(i).getRadius());
-		}
-		
-		//piesia shurikenus
-		for(int u = 0; u < NinjaList.size(); u++){
+
+		// piesia shurikenus
+		for (int u = 0; u < NinjaList.size(); u++) {
 			for (int i = 0; i < NinjaList.get(u).getShurikens().size(); i++) {
-				batch.draw(ShurikenImage, NinjaList.get(u).getShurikens().get(i).getX() - NinjaList.get(u).getShurikens().get(i).radius,
+				batch.draw(ShurikenImage,
+						NinjaList.get(u).getShurikens().get(i).getX() - NinjaList.get(u).getShurikens().get(i).radius,
 						NinjaList.get(u).getShurikens().get(i).getY() - NinjaList.get(u).getShurikens().get(i).radius);
-				NinjaList.get(u).getShurikens().get(i).x += Math.cos(NinjaList.get(u).getShurikens().get(i).kampas) 
+				NinjaList.get(u).getShurikens().get(i).x += Math.cos(NinjaList.get(u).getShurikens().get(i).kampas)
 						* Gdx.graphics.getDeltaTime() * ShuSpeed;
-				NinjaList.get(u).getShurikens().get(i).y += Math.sin(NinjaList.get(u).getShurikens().get(i).kampas) 
+				NinjaList.get(u).getShurikens().get(i).y += Math.sin(NinjaList.get(u).getShurikens().get(i).kampas)
 						* Gdx.graphics.getDeltaTime() * ShuSpeed;
 				for (int j = 1; j < NinjaList.size(); j++) {
 					if (atstumas(NinjaList.get(j).x, NinjaList.get(u).getShurikens().get(i).x, NinjaList.get(j).y,
@@ -96,7 +108,11 @@ public class MyGame implements ApplicationListener {
 				}
 			}
 		}
-		
+
+		for (int i = 0; i < NinjaList.size(); i++) {
+			batch.draw(NinjaImage, NinjaList.get(i).x - NinjaList.get(i).getRadius(),
+					NinjaList.get(i).y - NinjaList.get(i).getRadius());
+		}
 		
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
@@ -113,44 +129,46 @@ public class MyGame implements ApplicationListener {
 		font.draw(batch, rad, 0, 300);
 		batch.end();
 	}
-	
+
 	@Override
 	public void render() {
 
 		draw();
-		
-		if(Gdx.input.isKeyPressed(Keys.A) && Gdx.input.isKeyPressed(Keys.S)){
+
+		if (Gdx.input.isKeyPressed(Keys.A) && Gdx.input.isKeyPressed(Keys.S)) {
 			NinjaList.get(main).x -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
 			NinjaList.get(main).y -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
-		}else if(Gdx.input.isKeyPressed(Keys.A) && Gdx.input.isKeyPressed(Keys.W)){
+		} else if (Gdx.input.isKeyPressed(Keys.A) && Gdx.input.isKeyPressed(Keys.W)) {
 			NinjaList.get(main).x -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
 			NinjaList.get(main).y += Speed * 0.707 * Gdx.graphics.getDeltaTime();
-		}else if(Gdx.input.isKeyPressed(Keys.D) && Gdx.input.isKeyPressed(Keys.S)){
+		} else if (Gdx.input.isKeyPressed(Keys.D) && Gdx.input.isKeyPressed(Keys.S)) {
 			NinjaList.get(main).x += Speed * 0.707 * Gdx.graphics.getDeltaTime();
 			NinjaList.get(main).y -= Speed * 0.707 * Gdx.graphics.getDeltaTime();
-		}else if(Gdx.input.isKeyPressed(Keys.D) && Gdx.input.isKeyPressed(Keys.W)){
+		} else if (Gdx.input.isKeyPressed(Keys.D) && Gdx.input.isKeyPressed(Keys.W)) {
 			NinjaList.get(main).x += Speed * 0.707 * Gdx.graphics.getDeltaTime();
 			NinjaList.get(main).y += Speed * 0.707 * Gdx.graphics.getDeltaTime();
-		}
-		else if (Gdx.input.isKeyPressed(Keys.A)) {
+		} else if (Gdx.input.isKeyPressed(Keys.A)) {
 			NinjaList.get(main).x -= Speed * Gdx.graphics.getDeltaTime();
 		} else if (Gdx.input.isKeyPressed(Keys.D)) {
 			NinjaList.get(main).x += Speed * Gdx.graphics.getDeltaTime();
 		} else if (Gdx.input.isKeyPressed(Keys.W)) {
 			NinjaList.get(main).y += Speed * Gdx.graphics.getDeltaTime();
-		} else if (Gdx.input.isKeyPressed(Keys.S)){
+		} else if (Gdx.input.isKeyPressed(Keys.S)) {
 			NinjaList.get(main).y -= Speed * Gdx.graphics.getDeltaTime();
 		}
-		
-		for (int j = 0; j < NinjaList.size(); j++){
+
+		for (int j = 0; j < NinjaList.size(); j++) {
 			for (int i = j + 1; i < NinjaList.size(); i++) {
-				if (atstumas(NinjaList.get(j).x, NinjaList.get(i).x, NinjaList.get(j).y, NinjaList.get(i).y) < NinjaRadius * 2 - 3) {
-					double CollisionKampas = Math.atan2(NinjaList.get(j).y - NinjaList.get(i).y, NinjaList.get(j).x - NinjaList.get(i).x);
+				if (atstumas(NinjaList.get(j).x, NinjaList.get(i).x, NinjaList.get(j).y,
+						NinjaList.get(i).y) < NinjaRadius * 2 - 3) {
+					double CollisionKampas = Math.atan2(NinjaList.get(j).y - NinjaList.get(i).y,
+							NinjaList.get(j).x - NinjaList.get(i).x);
 					NinjaList.get(j).x += Math.cos(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
 					NinjaList.get(j).y += Math.sin(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
 					NinjaList.get(i).x -= Math.cos(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
 					NinjaList.get(i).y -= Math.sin(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
-					if (atstumas(NinjaList.get(j).x, NinjaList.get(i).x, NinjaList.get(j).y, NinjaList.get(i).y) < NinjaRadius * 2 - 2) {
+					if (atstumas(NinjaList.get(j).x, NinjaList.get(i).x, NinjaList.get(j).y,
+							NinjaList.get(i).y) < NinjaRadius * 2 - 2) {
 						NinjaList.get(j).x += Math.cos(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
 						NinjaList.get(j).y += Math.sin(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
 						NinjaList.get(i).x -= Math.cos(CollisionKampas) * Gdx.graphics.getDeltaTime() * Speed / 2;
@@ -159,38 +177,38 @@ public class MyGame implements ApplicationListener {
 				}
 			}
 		}
-		
-		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {	
-			if (TimeUtils.nanoTime()/2- shuCool > 500000000) {
+
+		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+			if (TimeUtils.nanoTime() / 2 - shuCool > 500000000) {
 				kampas = (float) Math.atan2(ScHeight - Gdx.input.getY() * ScHeight / h - NinjaList.get(main).y,
 						Gdx.input.getX() * ScWidth / w - NinjaList.get(main).x);
-				NinjaList.get(main).addShuriken(ShurikenImage, NinjaList.get(main).x - ShuRadius, NinjaList.get(main).y - ShuRadius, ShuRadius, kampas);
-				shuCool = TimeUtils.nanoTime()/2;
-			}		
+				NinjaList.get(main).addShuriken(ShurikenImage, NinjaList.get(main).x - ShuRadius,
+						NinjaList.get(main).y - ShuRadius, ShuRadius, kampas);
+				shuCool = TimeUtils.nanoTime() / 2;
+			}
 		}
-		//borders
-		for(int i = 0; i < NinjaList.size(); i++){	
-			if(NinjaList.get(i).x - NinjaList.get(i).getRadius() < 0){
+		// borders
+		for (int i = 0; i < NinjaList.size(); i++) {
+			if (NinjaList.get(i).x - NinjaList.get(i).getRadius() < 0) {
 				NinjaList.get(i).x = NinjaList.get(i).getRadius();
 			}
-			if(NinjaList.get(i).y - NinjaList.get(i).getRadius() < 0){
+			if (NinjaList.get(i).y - NinjaList.get(i).getRadius() < 0) {
 				NinjaList.get(i).y = NinjaList.get(i).getRadius();
 			}
-			if(NinjaList.get(i).x + NinjaList.get(i).getRadius() > ScWidth){
+			if (NinjaList.get(i).x + NinjaList.get(i).getRadius() > ScWidth) {
 				NinjaList.get(i).x = ScWidth - NinjaList.get(i).getRadius();
 			}
-			if(NinjaList.get(i).y + NinjaList.get(i).getRadius() > ScHeight){
+			if (NinjaList.get(i).y + NinjaList.get(i).getRadius() > ScHeight) {
 				NinjaList.get(i).y = ScHeight - NinjaList.get(i).getRadius();
 			}
 		}
-		
+
 	}
 
 	public float atstumas(float x, float x2, float y, float y2) {
 		return (float) Math.sqrt((x - x2) * (x - x2) + (y - y2) * (y - y2));
 	}
-	
-	
+
 	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
@@ -213,5 +231,123 @@ public class MyGame implements ApplicationListener {
 	public void dispose() {
 
 		batch.dispose();
+	}
+
+	private void Connection() {
+		// TODO Auto-generated method stub
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+				try {
+					ip = inFromUser.readLine();
+				} catch (IOException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+
+						while (true) {
+							DatagramSocket clientSocket = null;
+							try {
+								clientSocket = new DatagramSocket();
+							} catch (SocketException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								System.out.println("FROM SE");
+
+							}
+							InetAddress IPAddress = null;
+							try {
+								IPAddress = InetAddress.getByName(ip);
+							} catch (UnknownHostException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								System.out.println("FROM SE");
+
+							}
+							byte[] sendData = new byte[64];
+							byte[] receiveData = new byte[64];
+							String sentence = NinjaList.get(main).x + ":" + NinjaList.get(main).y + ":"; // inFromUser.readLine();
+							sendData = sentence.getBytes();
+							DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
+							try {
+								clientSocket.send(sendPacket);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								System.out.println("FROM SE");
+
+							}
+							clientSocket.close();
+							try {
+								Thread.sleep(5);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								System.out.println("FROM SE");
+
+							}
+						}
+
+					}
+				}).start(); // And, start the thread running
+
+				while (true) {
+					Random rand = new Random();
+					DatagramSocket clientSocket = null;
+					try {
+						clientSocket = new DatagramSocket(15232);
+					} catch (SocketException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						System.out.println("FROM SE");
+
+					}
+					InetAddress IPAddress = null;
+					try {
+						IPAddress = InetAddress.getByName(ip);
+					} catch (UnknownHostException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						System.out.println("FROM SE");
+					}
+					byte[] sendData = new byte[64];
+					byte[] receiveData = new byte[64];
+					String sentence = NinjaList.get(main).x + ":" + NinjaList.get(main).y + ":"; // inFromUser.readLine();
+					sendData = sentence.getBytes();
+					DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
+					try {
+						clientSocket.send(sendPacket);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+						System.out.println("FROM SE");
+
+					}
+					DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+					try {
+						clientSocket.receive(receivePacket);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						System.out.println("FROM SE");
+
+					}
+					String modifiedSentence = new String(receivePacket.getData());
+					System.out.println("FROM SERVER:" + modifiedSentence);
+					clientSocket.close();
+				}
+			}
+		}).start(); // And, start the thread running
+		// Now we create a thread that will listen for incoming socket
+		// connections
+
 	}
 }

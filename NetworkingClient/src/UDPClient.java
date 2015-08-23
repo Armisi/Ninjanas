@@ -7,7 +7,7 @@ class UDPClient {
 		
 		   // Now we create a thread that will listen for incoming socket connections
         new Thread (new Runnable(){
-
+        	
             @Override
             public void run() {
             	while(true){
@@ -78,8 +78,8 @@ class UDPClient {
 			e.printStackTrace();
 			System.out.println("FROM SE");
 		}
-		byte[] sendData = new byte[1024];
-		byte[] receiveData = new byte[1024];
+		byte[] sendData = new byte[64];
+		byte[] receiveData = new byte[64];
 		String sentence = ""+n; //inFromUser.readLine();
 		sendData = sentence.getBytes();
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
