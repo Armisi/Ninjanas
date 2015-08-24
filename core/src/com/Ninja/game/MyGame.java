@@ -99,11 +99,13 @@ public class MyGame implements ApplicationListener {
 						* Gdx.graphics.getDeltaTime() * ShuSpeed;
 				NinjaList.get(u).getShurikens().get(i).y += Math.sin(NinjaList.get(u).getShurikens().get(i).kampas)
 						* Gdx.graphics.getDeltaTime() * ShuSpeed;
-				for (int j = 1; j < NinjaList.size(); j++) {
-					if (atstumas(NinjaList.get(j).x, NinjaList.get(u).getShurikens().get(i).x, NinjaList.get(j).y,
-							NinjaList.get(u).getShurikens().get(i).y) < NinjaRadius + ShuRadius - 5) {
-						NinjaList.get(j).x = (float) Math.random() * ScWidth;
-						NinjaList.get(j).y = (float) Math.random() * ScHeight;
+				for (int j = 0; j < NinjaList.size(); j++) {
+					if (j != u) {
+						if (atstumas(NinjaList.get(j).x, NinjaList.get(u).getShurikens().get(i).x, NinjaList.get(j).y,
+								NinjaList.get(u).getShurikens().get(i).y) < NinjaRadius + ShuRadius - 5) {
+							NinjaList.get(j).x = (float) Math.random() * ScWidth;
+							NinjaList.get(j).y = (float) Math.random() * ScHeight;
+						}
 					}
 				}
 			}
