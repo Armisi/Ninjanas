@@ -10,6 +10,14 @@ import java.util.Random;
 
 public class MultiServerThread  extends Thread {
 	
+	public InetAddress getIpAddress() {
+		return ipAddress;
+	}
+
+	public void setIpAddress(InetAddress ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
 	int port;
 	InetAddress ipAddress;
 	

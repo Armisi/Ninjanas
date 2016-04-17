@@ -47,8 +47,9 @@ public class MyGame implements ApplicationListener {
 	private float ShuRadius = 16;
 	private float NinjaRadius = 64;
 	private int NinjaCount = 4;
-	private int main = 0;
+	private int main = 2;
 	private String ip;
+	private int score = 0;
 
 	private List<Ninja> NinjaList;
 
@@ -76,6 +77,8 @@ public class MyGame implements ApplicationListener {
 		h = Gdx.graphics.getHeight();
 
 		Connection();
+		
+		
 	}
 
 	public void draw() {
@@ -193,18 +196,48 @@ public class MyGame implements ApplicationListener {
 		for (int i = 0; i < NinjaList.size(); i++) {
 			if (NinjaList.get(i).x - NinjaList.get(i).getRadius() < 0) {
 				NinjaList.get(i).x = NinjaList.get(i).getRadius();
+				NinjaList.get(i).setTime(0);
 			}
 			if (NinjaList.get(i).y - NinjaList.get(i).getRadius() < 0) {
 				NinjaList.get(i).y = NinjaList.get(i).getRadius();
+				NinjaList.get(i).setTime(0);
 			}
 			if (NinjaList.get(i).x + NinjaList.get(i).getRadius() > ScWidth) {
 				NinjaList.get(i).x = ScWidth - NinjaList.get(i).getRadius();
+				NinjaList.get(i).setTime(0);
 			}
 			if (NinjaList.get(i).y + NinjaList.get(i).getRadius() > ScHeight) {
 				NinjaList.get(i).y = ScHeight - NinjaList.get(i).getRadius();
+				NinjaList.get(i).setTime(0);
 			}
 		}
-
+		
+		//score
+		
+		AI();
+		
+	}
+	
+	public void AI(){
+		Random randomGenerator = new Random();
+		for(int i = 0; i < NinjaList.size(); i++){
+			if(i != main){
+			NinjaList.get(i).x += Math.cos(NinjaList.get(i).getAngle()) * Gdx.graphics.getDeltaTime() * Speed;
+			NinjaList.get(i).y += Math.sin(NinjaList.get(i).getAngle()) * Gdx.graphics.getDeltaTime() * Speed;
+			}
+		}
+		
+		
+		for (int i = 0; i < NinjaList.size(); i++) {
+			if(i != main){
+			if (NinjaList.get(i).getTime() < TimeUtils.nanoTime() / 1000) {
+				
+				NinjaList.get(i).setTime(randomGenerator.nextInt(5000000) + TimeUtils.nanoTime() / 1000);
+				NinjaList.get(i).setAngle(randomGenerator.nextInt(360));
+				System.out.println(TimeUtils.nanoTime());
+			}
+			}
+		}
 	}
 
 	public float atstumas(float x, float x2, float y, float y2) {

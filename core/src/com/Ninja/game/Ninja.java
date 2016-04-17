@@ -10,6 +10,8 @@ import com.badlogic.gdx.math.Circle;
 public class Ninja extends Circle{
 	private Texture NinjaImage; // nindzes paveiksliukas
 	private List<Shuriken> shuList;
+	private float time = 0;
+	private float angle = 0;
 	
 	public Ninja(Texture NinjaT, float x, float y, float radius){
 		this.x = x + radius;
@@ -17,6 +19,24 @@ public class Ninja extends Circle{
 		this.NinjaImage = NinjaT;
 		this.radius = radius;
 		shuList = new ArrayList<Shuriken>();
+		
+	}
+	
+	public void setAngle(float angle){
+		this.angle = angle;
+	}
+	
+	public void setTime(float time){
+		this.time = time;
+		
+	}
+	
+	public float getAngle(){
+		return angle;
+	}
+	
+	public float getTime(){
+		return time;
 	}
 	
 	public float getRadius(){
