@@ -12,6 +12,9 @@ public class Ninja extends Circle{
 	private List<Shuriken> shuList;
 	private float time = 0;
 	private float angle = 0;
+	private float DeathTime = 0;
+	private boolean dead = false;
+	
 	
 	public Ninja(Texture NinjaT, float x, float y, float radius){
 		this.x = x + radius;
@@ -20,6 +23,14 @@ public class Ninja extends Circle{
 		this.radius = radius;
 		shuList = new ArrayList<Shuriken>();
 		
+	}
+	
+	public void setDead(boolean dead){
+		this.dead = dead;
+	}
+	
+	public boolean getDead(){
+		return dead;
 	}
 	
 	public void setAngle(float angle){
@@ -39,6 +50,10 @@ public class Ninja extends Circle{
 		return time;
 	}
 	
+	public float getDeathTime(){
+		return DeathTime;
+	}
+	
 	public float getRadius(){
 		return radius;
 	}
@@ -56,4 +71,10 @@ public class Ninja extends Circle{
 	public List<Shuriken> getShurikens(){
 		return shuList;
 	}
+
+	public void setDeathTime(float nanoTime) {
+		this.DeathTime = nanoTime;
+	}
+
+	
 }

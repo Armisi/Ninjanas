@@ -50,8 +50,12 @@ public class MyGame implements ApplicationListener {
 	private int main = 2;
 	private String ip;
 	private int score = 0;
-
+	private float DeathDelay = 5000000;
+	private float AngleDelay = 5000000;
 	private List<Ninja> NinjaList;
+	private boolean sauta = false;
+	
+	private float shuDelay = 50000000;
 
 	@Override
 
@@ -90,7 +94,7 @@ public class MyGame implements ApplicationListener {
 		batch.begin();
 		batch.draw(BackgroundImage, 0, 0);
 
-		
+		Random randomGenerator = new Random();
 
 		// piesia shurikenus
 		for (int u = 0; u < NinjaList.size(); u++) {
@@ -106,18 +110,28 @@ public class MyGame implements ApplicationListener {
 					if (j != u) {
 						if (atstumas(NinjaList.get(j).x, NinjaList.get(u).getShurikens().get(i).x, NinjaList.get(j).y,
 								NinjaList.get(u).getShurikens().get(i).y) < NinjaRadius + ShuRadius - 5) {
-							NinjaList.get(j).x = (float) Math.random() * ScWidth;
-							NinjaList.get(j).y = (float) Math.random() * ScHeight;
+							NinjaList.get(j).setDeathTime((TimeUtils.nanoTime() / 1000));
+							NinjaList.get(j).setDead(true);
+							NinjaList.get(j).x = randomGenerator.nextInt(9998) - 9998/2; // tigi px
+							NinjaList.get(j).y = randomGenerator.nextInt(9998) - 9998/2;
+							
 						}
 					}
 				}
 			}
 		}
+		
+		for(int i = 0; i < NinjaList.size(); i++){
+		
+		}
 
 		for (int i = 0; i < NinjaList.size(); i++) {
-			batch.draw(NinjaImage, NinjaList.get(i).x - NinjaList.get(i).getRadius(),
-					NinjaList.get(i).y - NinjaList.get(i).getRadius());
-		}
+	if(TimeUtils.nanoTime() / 1000 - NinjaList.get(i).getDeathTime() > DeathDelay){
+		batch.draw(NinjaImage, NinjaList.get(i).x - NinjaList.get(i).getRadius(),
+				NinjaList.get(i).y - NinjaList.get(i).getRadius());
+			NinjaList.get(i).setDead(false);
+			}
+					}
 		
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getHeight();
@@ -183,32 +197,41 @@ public class MyGame implements ApplicationListener {
 			}
 		}
 
-		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-			if (TimeUtils.nanoTime() / 2 - shuCool > 500000000) {
+		
+		if (Gdx.input.isButtonPressed((Input.Buttons.LEFT))) {
+			System.out.println("as");
+			
+			if (TimeUtils.nanoTime() / 2 - shuCool > shuDelay) {
+								
 				kampas = (float) Math.atan2(ScHeight - Gdx.input.getY() * ScHeight / h - NinjaList.get(main).y,
 						Gdx.input.getX() * ScWidth / w - NinjaList.get(main).x);
 				NinjaList.get(main).addShuriken(ShurikenImage, NinjaList.get(main).x - ShuRadius,
 						NinjaList.get(main).y - ShuRadius, ShuRadius, kampas);
 				shuCool = TimeUtils.nanoTime() / 2;
+				
 			}
+		
 		}
 		// borders
+		Random randomGenerator = new Random();
 		for (int i = 0; i < NinjaList.size(); i++) {
+			if(!NinjaList.get(i).getDead()){
 			if (NinjaList.get(i).x - NinjaList.get(i).getRadius() < 0) {
 				NinjaList.get(i).x = NinjaList.get(i).getRadius();
-				NinjaList.get(i).setTime(0);
+				NinjaList.get(i).setAngle(randomGenerator.nextInt(180) - 90);
 			}
 			if (NinjaList.get(i).y - NinjaList.get(i).getRadius() < 0) {
 				NinjaList.get(i).y = NinjaList.get(i).getRadius();
-				NinjaList.get(i).setTime(0);
+				NinjaList.get(i).setAngle(randomGenerator.nextInt(180));
 			}
 			if (NinjaList.get(i).x + NinjaList.get(i).getRadius() > ScWidth) {
 				NinjaList.get(i).x = ScWidth - NinjaList.get(i).getRadius();
-				NinjaList.get(i).setTime(0);
+				NinjaList.get(i).setAngle(randomGenerator.nextInt(180) + 90);
 			}
 			if (NinjaList.get(i).y + NinjaList.get(i).getRadius() > ScHeight) {
 				NinjaList.get(i).y = ScHeight - NinjaList.get(i).getRadius();
-				NinjaList.get(i).setTime(0);
+				NinjaList.get(i).setAngle(randomGenerator.nextInt(180) + 180);
+			}
 			}
 		}
 		
@@ -232,9 +255,8 @@ public class MyGame implements ApplicationListener {
 			if(i != main){
 			if (NinjaList.get(i).getTime() < TimeUtils.nanoTime() / 1000) {
 				
-				NinjaList.get(i).setTime(randomGenerator.nextInt(5000000) + TimeUtils.nanoTime() / 1000);
+				NinjaList.get(i).setTime(randomGenerator.nextInt((int)AngleDelay) + TimeUtils.nanoTime() / 1000);
 				NinjaList.get(i).setAngle(randomGenerator.nextInt(360));
-				System.out.println(TimeUtils.nanoTime());
 			}
 			}
 		}
