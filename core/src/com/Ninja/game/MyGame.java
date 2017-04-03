@@ -290,6 +290,11 @@ public class MyGame implements ApplicationListener {
 		batch.dispose();
 	}
 
+	public void Keiciam(){
+		System.out.println("Keiciam");
+
+	}
+
 	private void Connection() {
 		// TODO Auto-generated method stub
 		new Thread(new Runnable() {
